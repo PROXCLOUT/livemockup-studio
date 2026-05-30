@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Device Mockups – Pure CSS + iFrame</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --space-black: #1d1d1f;
+    --silver: #e3e4e6;
+    --silver-dark: #a1a1a6;
+    --bezel: #0a0a0a;
+    --screen-bg: #000;
+    --glass: rgba(255,255,255,0.04);
+    --glass-edge: rgba(255,255,255,0.12);
+    --shadow-heavy: 0 30px 80px rgba(0,0,0,0.55), 0 10px 30px rgba(0,0,0,0.3);
+    --shadow-light: 0 20px 60px rgba(0,0,0,0.4), 0 5px 20px rgba(0,0,0,0.2);
+    --page-bg: #f5f5f7;
+    --card-bg: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --accent: #0071e3;
+    --desk-surface: linear-gradient(180deg, #d4c5a9 0%, #c7b899 40%, #bfae8e 100%);
+  }
+
+  body {
+    font-family: 'Instrument Sans', -apple-system, sans-serif;
+    background: var(--page-bg);
+    color: var(--text-primary);
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* ── URL Bar ── */
+  .url-bar-global {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .url-bar-global label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .url-bar-global input {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--text-primary);
+    transition: border-color 0.2s;
+  }
+  .url-bar-global input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
+  }
+  .url-bar-global button {
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .url-bar-global button:hover { background: #0077ed; transform: scale(1.03); }
+  .url-bar-global button:active { transform: scale(0.97); }
+
+  /* ── Page Layout ── */
+  .page-header {
+    text-align: center;
+    padding: 100px 24px 40px;
+  }
+  .page-header h1 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .page-header p {
+    margin-top: 12px;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+
+  .mockup-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+
+  .mockup-section {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 30px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    overflow: hidden;
+  }
+  .mockup-section h2 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    align-self: flex-start;
+  }
+
+  .device-stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    min-height: 300px;
+  }
+
+  iframe {
+    border: none;
+    background: #fff;
+    display: block;
+  }
+
+  /* ══════════════════════════════════════════
+     1. LAPTOP
+  ══════════════════════════════════════════ */
+  .laptop {
+    position: relative;
+  }
+  .laptop-screen {
+    width: 640px;
+    height: 400px;
+    background: var(--bezel);
+    border-radius: 12px 12px 0 0;
+    padding: 12px 12px 0 12px;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .laptop-screen::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px; height: 6px;
+    background: #1a1a2e;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+  }
+  .laptop-screen .screen-inner {
+    width: 100%;
+    height: 388px;
+    background: var(--screen-bg);
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .laptop-screen .screen-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .laptop-screen iframe {
+    width: 100%; height: 100%;
+  }
+  .laptop-base {
+    width: 720px;
+    height: 14px;
+    background: linear-gradient(180deg, #c8c9cc 0%, #a8a9ad 40%, #b8b9bc 100%);
+    border-radius: 0 0 8px 8px;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .laptop-base::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 4px;
+    background: #999;
+    border-radius: 0 0 4px 4px;
+  }
+  .laptop-bottom {
+    width: 740px;
+    height: 6px;
+    background: linear-gradient(180deg, #b0b1b4, #a0a1a4);
+    border-radius: 0 0 12px 12px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-heavy);
+  }
+
+  /* ══════════════════════════════════════════
+     2. MONITOR – PERSPECTIVE
+  ══════════════════════════════════════════ */
+  .monitor-perspective-wrapper {
+    perspective: 1200px;
+    display: flex;
+    justify-content: center;
+  }
+  .monitor {
+    transform: rotateY(-18deg) rotateX(3deg);
+    transform-style: preserve-3d;
+    position: relative;
+  }
+  .monitor-body {
+    width: 600px;
+    height: 380px;
+    background: var(--bezel);
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06),
+                var(--shadow-heavy);
+  }
+  .monitor-body .screen-inner {
+    width: 100%; height: 100%;
+    background: var(--screen-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .monitor-body .screen-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .monitor-body iframe {
+    width: 100%; height: 100%;
+  }
+  .monitor-chin {
+    width: 600px;
+    height: 24px;
+    background: linear-gradient(180deg, #0f0f0f, #1a1a1e);
+    border-radius: 0 0 14px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .monitor-chin::after {
+    content: '';
+    width: 10px; height: 10px;
+    background: #111;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .monitor-neck {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(180deg, var(--silver-dark), var(--silver));
+    margin: 0 auto;
+    clip-path: polygon(15% 0, 85% 0, 100% 100%, 0 100%);
+  }
+  .monitor-stand {
+    width: 180px;
+    height: 12px;
+    background: linear-gradient(180deg, var(--silver), #ccc);
+    border-radius: 6px 6px 2px 2px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* ══════════════════════════════════════════
+     3. PHONE
+  ══════════════════════════════════════════ */
+  .phone {
+    position: relative;
+  }
+  .phone-body {
+    width: 220px;
+    height: 450px;
+    background: var(--space-black);
+    border-radius: 32px;
+    padding: 12px;
+    position: relative;
+    box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.08),
+                var(--shadow-light);
+  }
+  /* Notch */
+  .phone-body.has-notch::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%; transform: translateX(-50%);
+    width: 90px; height: 22px;
+    background: var(--space-black);
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+  .phone-body .screen-inner {
+    width: 100%; height: 100%;
+    background: var(--screen-bg);
+    border-radius: 22px;
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-body .screen-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 5;
+  }
+  .phone-body iframe {
+    width: 375px;
+    height: 812px;
+    transform: scale(0.525);
+    transform-origin: top left;
+  }
+  /* Side buttons */
+  .phone-body::after {
+    content: '';
+    position: absolute;
+    right: -3px; top: 100px;
+    width: 3px; height: 40px;
+    background: #333;
+    border-radius: 0 2px 2px 0;
+  }
+  .phone .vol-buttons {
+    position: absolute;
+    left: -3px; top: 90px;
+    width: 3px; height: 30px;
+    background: #333;
+    border-radius: 2px 0 0 2px;
+    box-shadow: 0 36px 0 #333;
+  }
+
+  /* ══════════════════════════════════════════
+     4. PHONE DYNAMIC (Dynamic Island)
+  ══════════════════════════════════════════ */
+  .phone-body.has-dynamic-island::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 50%; transform: translateX(-50%);
+    width: 72px; height: 20px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 10;
+    box-shadow: 0 0 0 0.5px rgba(255,255,255,0.06);
+  }
+
+  /* ══════════════════════════════════════════
+     5. TABLET
+  ══════════════════════════════════════════ */
+  .tablet {
+    position: relative;
+  }
+  .tablet-body {
+    width: 480px;
+    height: 340px;
+    background: var(--space-black);
+    border-radius: 18px;
+    padding: 16px;
+    position: relative;
+    box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.06),
+                var(--shadow-heavy);
+  }
+  .tablet-body .screen-inner {
+    width: 100%; height: 100%;
+    background: var(--screen-bg);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .tablet-body .screen-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .tablet-body iframe {
+    width: 1024px;
+    height: 700px;
+    transform: scale(0.44);
+    transform-origin: top left;
+  }
+  /* Camera */
+  .tablet-body::before {
+    content: '';
+    position: absolute;
+    top: 50%; right: 7px;
+    transform: translateY(-50%);
+    width: 5px; height: 5px;
+    background: #111;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.1);
+    z-index: 3;
+  }
+
+  /* ══════════════════════════════════════════
+     6. TABLET DYNAMIC (thin bezel, Face ID)
+  ══════════════════════════════════════════ */
+  .tablet-body.thin-bezel {
+    padding: 10px;
+    border-radius: 14px;
+  }
+  .tablet-body.thin-bezel .screen-inner {
+    border-radius: 6px;
+  }
+  .tablet-body.thin-bezel iframe {
+    width: 1024px;
+    height: 680px;
+    transform: scale(0.45);
+    transform-origin: top left;
+  }
+
+  /* ══════════════════════════════════════════
+     7. DESK SCENE (Laptop + Phone)
+  ══════════════════════════════════════════ */
+  .desk-scene {
+    width: 100%;
+    min-height: 480px;
+    background: var(--desk-surface);
+    border-radius: 16px;
+    padding: 50px 40px 30px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 50px;
+    position: relative;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.2),
+                inset 0 -4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  /* Wood grain */
+  .desk-scene::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(0,0,0,0.015) 1px,
+      transparent 2px,
+      transparent 80px
+    );
+    pointer-events: none;
+  }
+  /* Shadow on desk */
+  .desk-scene::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 20px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .desk-scene .laptop { position: relative; z-index: 2; }
+  .desk-scene .phone { position: relative; z-index: 2; margin-bottom: 10px; }
+
+  /* Smaller desk variants */
+  .desk-scene .laptop .laptop-screen { width: 520px; height: 325px; }
+  .desk-scene .laptop .laptop-screen .screen-inner { height: 313px; }
+  .desk-scene .laptop .laptop-base { width: 580px; }
+  .desk-scene .laptop .laptop-bottom { width: 600px; }
+
+  .desk-scene .phone .phone-body {
+    width: 170px; height: 350px;
+    border-radius: 26px; padding: 10px;
+  }
+  .desk-scene .phone .phone-body .screen-inner { border-radius: 18px; }
+  .desk-scene .phone .phone-body.has-dynamic-island::before {
+    width: 56px; height: 16px; top: 14px;
+  }
+  .desk-scene .phone .phone-body iframe {
+    width: 375px;
+    height: 812px;
+    transform: scale(0.405);
+    transform-origin: top left;
+  }
+
+  /* ══════════════════════════════════════════
+     8. TABLET + PHONE COMBO
+  ══════════════════════════════════════════ */
+  .combo-stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 50px;
+    width: 100%;
+  }
+  .combo-stage .tablet-body {
+    width: 440px;
+    height: 310px;
+  }
+  .combo-stage .tablet-body iframe {
+    width: 1024px;
+    height: 700px;
+    transform: scale(0.40);
+    transform-origin: top left;
+  }
+  .combo-stage .phone .phone-body {
+    width: 180px;
+    height: 370px;
+    border-radius: 28px;
+    padding: 10px;
+  }
+  .combo-stage .phone .phone-body .screen-inner { border-radius: 20px; }
+  .combo-stage .phone .phone-body iframe {
+    width: 375px;
+    height: 812px;
+    transform: scale(0.43);
+    transform-origin: top left;
+  }
+  .combo-stage .phone .vol-buttons { top: 75px; }
+  .combo-stage .phone .phone-body::after { top: 85px; }
+
+  /* ══════════════════════════════════════════
+     SCREEN REFLECTIONS (universal glass overlay)
+  ══════════════════════════════════════════ */
+  .reflection {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .reflection::before {
+    content: '';
+    position: absolute;
+    top: -20%; left: -20%;
+    width: 60%; height: 200%;
+    background: linear-gradient(
+      125deg,
+      rgba(255,255,255,0.06) 0%,
+      rgba(255,255,255,0.02) 30%,
+      transparent 50%
+    );
+    transform: rotate(-15deg);
+  }
+
+  /* ══════════════════════════════════════════
+     STATUS BAR (for phones/tablets)
+  ══════════════════════════════════════════ */
+  .status-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 8;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .status-bar .time { font-size: 13px; }
+  .status-bar .icons { display: flex; gap: 5px; align-items: center; }
+  .status-bar .icons svg { width: 14px; height: 14px; fill: #fff; }
+
+  /* ══════════════════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mockup-section {
+    animation: fadeUp 0.6s ease-out both;
+  }
+  .mockup-section:nth-child(2) { animation-delay: 0.05s; }
+  .mockup-section:nth-child(3) { animation-delay: 0.1s; }
+  .mockup-section:nth-child(4) { animation-delay: 0.15s; }
+  .mockup-section:nth-child(5) { animation-delay: 0.2s; }
+  .mockup-section:nth-child(6) { animation-delay: 0.25s; }
+  .mockup-section:nth-child(7) { animation-delay: 0.3s; }
+  .mockup-section:nth-child(8) { animation-delay: 0.35s; }
+
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>Device Mockups</h1>
+  <p>Realistische Geräte-Ansichten · Pure HTML &amp; CSS · iFrame-fähig</p>
+</div>
+
+<div class="mockup-grid">
+
+  <!-- ═══ 1. LAPTOP ═══ -->
+  <section class="mockup-section">
+    <h2>01 — Laptop</h2>
+    <div class="device-stage">
+      <div class="laptop">
+        <div class="laptop-screen">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+        <div class="laptop-base"></div>
+        <div class="laptop-bottom"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 2. MONITOR PERSPECTIVE ═══ -->
+  <section class="mockup-section">
+    <h2>02 — Monitor · Perspektive</h2>
+    <div class="device-stage">
+      <div class="monitor-perspective-wrapper">
+        <div class="monitor">
+          <div class="monitor-body">
+            <div class="screen-inner">
+              <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+              <div class="reflection"></div>
+            </div>
+          </div>
+          <div class="monitor-chin"></div>
+          <div class="monitor-neck"></div>
+          <div class="monitor-stand"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 3. PHONE ═══ -->
+  <section class="mockup-section">
+    <h2>03 — Phone</h2>
+    <div class="device-stage">
+      <div class="phone">
+        <div class="phone-body has-notch">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+        <div class="vol-buttons"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 4. PHONE DYNAMIC ISLAND ═══ -->
+  <section class="mockup-section">
+    <h2>04 — Phone · Dynamic Island</h2>
+    <div class="device-stage">
+      <div class="phone">
+        <div class="phone-body has-dynamic-island">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+        <div class="vol-buttons"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 5. TABLET ═══ -->
+  <section class="mockup-section">
+    <h2>05 — Tablet</h2>
+    <div class="device-stage">
+      <div class="tablet">
+        <div class="tablet-body">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 6. TABLET DYNAMIC ═══ -->
+  <section class="mockup-section">
+    <h2>06 — Tablet · Dynamic</h2>
+    <div class="device-stage">
+      <div class="tablet">
+        <div class="tablet-body thin-bezel">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 7. LAPTOP + PHONE ON DESK ═══ -->
+  <section class="mockup-section" style="padding: 0; overflow: hidden;">
+    <h2 style="padding: 32px 48px 0; width: 100%;">07 — Laptop &amp; Phone · Desk</h2>
+    <div class="desk-scene">
+      <div class="laptop">
+        <div class="laptop-screen">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+        <div class="laptop-base"></div>
+        <div class="laptop-bottom"></div>
+      </div>
+      <div class="phone">
+        <div class="phone-body has-dynamic-island">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+        <div class="vol-buttons"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 8. TABLET + PHONE ═══ -->
+  <section class="mockup-section">
+    <h2>08 — Tablet &amp; Phone</h2>
+    <div class="combo-stage">
+      <div class="tablet">
+        <div class="tablet-body thin-bezel">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone">
+        <div class="phone-body has-dynamic-island">
+          <div class="screen-inner">
+            <iframe class="device-iframe" src="https://apple.com" loading="lazy"></iframe>
+            <div class="reflection"></div>
+          </div>
+        </div>
+        <div class="vol-buttons"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
