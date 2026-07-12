@@ -10,6 +10,8 @@ backend, no AI, no Gemini.
 npm install
 npm run dev
 ```
+OR
+npm run build && electron-builder --mac --x64
 
 Open [http://localhost:3000](http://localhost:3000), enter a URL in the top bar,
 and select mockups to export.
